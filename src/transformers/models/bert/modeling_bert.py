@@ -110,7 +110,7 @@ class BertEmbeddings(nn.Module):
         embeddings = self.dropout(embeddings)
         return embeddings
 
-
+# MEMO: self attentionを計算している関数らしい。あとで読む
 def eager_attention_forward(
     module: nn.Module,
     query: torch.Tensor,
@@ -139,7 +139,10 @@ def eager_attention_forward(
 
     return attn_output, attn_weights
 
-
+# MEMO: BERTのself attentionを抽象化しているクラス
+# - config: モデルのハイパーパラメータ＋挙動設定をまとめた設定オブジェクト
+# - is_causal: 未来を見てもいいかを設定するboolean値
+# layer_idx:
 class BertSelfAttention(nn.Module):
     def __init__(self, config, is_causal=False, layer_idx=None):
         super().__init__()

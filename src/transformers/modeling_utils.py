@@ -4699,7 +4699,12 @@ def caching_allocator_warmup(model: PreTrainedModel, expanded_device_map: dict, 
         # We divide by 2 here as we allocate in fp16
         _ = torch.empty(int(byte_count // 2), dtype=torch.float16, device=device, requires_grad=False)
 
-
+# DONE: attentionの実装方式を抽象化して切り替えるためのクラス
+# 数式は変わらないが、実装の仕方が変わるらしい
+# 通常: eager-数式をそのままコードにしたもの
+# PyTorch fused版を使う: sdpa-pytorchのオールインワン的なメモリ効率削減してくれて、GPU最適化してくれるもの
+# CUDA最適化で爆速: flash attention-attention専用にCUDAで書かれた最速実装を使う
+# KV cacheに対応: paged-keyとvalueをキャッシュする戦略
 class AttentionInterface(GeneralInterface):
     """
     Dict-like object keeping track of allowed attention functions. You can easily add a new attention function
